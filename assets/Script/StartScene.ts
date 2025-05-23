@@ -8,19 +8,9 @@
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class StartScene extends cc.Component {
-
-    // @property(cc.Label)
-    // label: cc.Label = null;
-
-    // @property
-    // text: string = 'hello';
-
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
-
-    start () 
+export default class StartScene extends cc.Component 
+{
+    start ()
     {
         let StartButton = new cc.Component.EventHandler();
         StartButton.target = this.node;
@@ -32,8 +22,6 @@ export default class StartScene extends cc.Component {
 
     loadLevelScene()
     {
-        cc.director.loadScene("Level");
+        cc.director.loadScene("LevelSelect");
     }
-
-    // update (dt) {}
 }

@@ -9,19 +9,16 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class LevelScene extends cc.Component {
-
-    // @property(cc.Label)
-    // label: cc.Label = null;
-
-    // @property
-    // text: string = 'hello';
-
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
-
-    start () 
+    start ()
     {
+        const gmNode = cc.find('Canvas'); // the mode
+        const gm = gmNode.getComponent('GameManager'); // the script
+
+        const moneyNode = cc.find("LevelScene/info/money/coin");
+        const userNode = cc.find("LevelScene/info/user/name");
+        const lifeNode = cc.find("LevelScene/info/life/Label_life");
+        const scoreNode = cc.find("LevelScene/info/score/Label_num");
+
         let Level0Button = new cc.Component.EventHandler();
         Level0Button.target = this.node;
         Level0Button.component ="LevelScene";
@@ -34,9 +31,39 @@ export default class LevelScene extends cc.Component {
 
         cc.find("LevelScene/Level0").getComponent(cc.Button).clickEvents.push(Level0Button);
         cc.find("LevelScene/Back").getComponent(cc.Button).clickEvents.push(BackButton);
-    }
 
-    // update (dt) {}
+        if(moneyNode)
+        {
+            const label = moneyNode.getComponent(cc.Label);
+            if (label) {
+                label.string = `${gm.coins}`;
+            }
+        }
+
+        if(userNode)
+        {
+            const label = userNode.getComponent(cc.Label);
+            if (label) {
+                label.string = `${gm.playerName}`;
+            }
+        }
+
+        if(lifeNode)
+        {
+            const label = lifeNode.getComponent(cc.Label);
+            if (label) {
+                label.string = `${gm.life}`;
+            }
+        }
+
+        if(scoreNode)
+        {
+            const label = scoreNode.getComponent(cc.Label);
+            if (label) {
+                label.string = `${gm.score}`;
+            }
+        }
+    }
 
     loadStartScene()
     {
@@ -45,6 +72,6 @@ export default class LevelScene extends cc.Component {
 
     loadGameScene()
     {
-        // cc.director.loadScene("Level");
+        cc.director.loadScene("GameStart");
     }
 }
