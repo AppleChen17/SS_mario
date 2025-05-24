@@ -1,28 +1,37 @@
-// const {ccclass, property} = cc._decorator;
+const {ccclass, property} = cc._decorator;
 
-// @ccclass
-// export default class Player extends cc.Component 
-// {
-//     @property()
-//     playerSpeed: number = 300;
+@ccclass
+export default class PlayerControl extends cc.Component 
+{
+    @property(cc.SpriteAtlas)
+    smallMarioAtlas: cc.SpriteAtlas = null;
 
-//     @property()
-//     playerStandSpeed: number = 50;
+    @property(cc.SpriteAtlas)
+    bigMarioAtlas: cc.SpriteAtlas = null;
+    
+    @property(cc.Sprite)
+    marioSprite: cc.Sprite = null;
 
-//     @property({type:cc.AudioClip})
-//     jumpSound: cc.AudioClip = null;
+    @property()
+    playerSpeed: number = 200;
 
-//     @property({type:cc.AudioClip})
-//     dieSound: cc.AudioClip = null;
+    @property()
+    playerStandSpeed: number = 50;
+
+    @property({type:cc.AudioClip})
+    jumpSound: cc.AudioClip = null;
+
+    @property({type:cc.AudioClip})
+    dieSound: cc.AudioClip = null;
 
 //     // @property(cc.Node)
 //     // gameMgr: cc.Node = null;
     
 //     private idleFrame: cc.SpriteFrame = null;
 
-//     private anim: cc.Animation = null;
-
-//     private moveDir = 0;
+    private anim: cc.Animation = null;
+    private physicManager: cc.PhysicsManager = null
+    private moveDir = 0;
 
 //     private ceilingPos: number = 155;
 
@@ -30,15 +39,24 @@
 
 //     private damageTime: number = 0;
 
-//     start () {
-//         this.idleFrame = this.getComponent(cc.Sprite).spriteFrame;
-//         this.anim = this.getComponent(cc.Animation);
-//     }
+    start () {
+        // this.idleFrame = this.getComponent(cc.Sprite).spriteFrame;
+        // this.anim = this.getComponent(cc.Animation);
+        this.reborn(cc.v2(-350, -150));
+    }
 
-//     update(dt)
-//     {
-//         this.node.x += this.playerSpeed * this.moveDir * dt;
-//         this.node.scaleX = (this.moveDir >= 0) ? 1 : -1;
+    onLoad() {
+        this.physicManager = cc.director.getPhysicsManager();
+        this.physicManager.enabled = true;
+        this.physicManager.gravity = cc.v2(0, -200);  // 推薦設一個合理值
+        // this.physicManager.debugDrawFlags = cc.PhysicsManager.DrawBits.e_shapeBit;
+    }
+
+    update(dt)
+    {
+        this.node.x += this.playerSpeed * this.moveDir * dt;
+        this.node.scaleX = (this.moveDir >= 0) ? 1 : -1;
+        console.log(this.node.x,this.node.y);
 //         this.node.y = (this.node.y >= this.ceilingPos) ? this.ceilingPos : this.node.y;
 //         if(this.getComponent(cc.RigidBody).linearVelocity.y != this.playerStandSpeed)
 //             this.fallDown = true;
@@ -50,78 +68,49 @@
 //         else
 //             this.damageTime = 0;
 
-//         this.playerAnimation();
-//     }
+        this.playerAnimation();
+    }
 
-//     reborn(rebornPos: cc.Vec2)
-//     {
-//         this.damageTime = 0;
-//         this.node.position = rebornPos;
-//         this.getComponent(cc.RigidBody).linearVelocity = cc.v2();
-//     }
+    eatMushroom() {
+        const bigFrame = this.bigMarioAtlas.getSpriteFrame("big_mario_idle"); // 根據你的圖名
+        this.marioSprite.spriteFrame = bigFrame;
+    }
 
-//     playerMove(moveDir: number)
-//     {
-//         this.moveDir = moveDir;
-//     }
+    reborn(rebornPos: cc.Vec2)
+    {
+        this.node.setPosition(rebornPos);
+        this.getComponent(cc.RigidBody).linearVelocity = cc.v2();
+    }
 
-//     playerDie()
-//     {
-//         cc.audioEngine.playEffect(this.dieSound,false);
-//         this.gameMgr.getComponent("GameMgr").updateLife(-12);
-//     }
+    playerMove(moveDir: number)
+    {
+        console.log("in playerMove ", moveDir);
+        this.moveDir = moveDir;
+    }
 
-//     playerAnimation()
-//     {
-//         if(this.fallDown)
-//         {
-//             if(this.damageTime > 0)
-//             {
-//                 if(this.moveDir == 0 && !this.anim.getAnimationState("fall_front_hurt").isPlaying)
-//                     this.anim.play("fall_front_hurt");
-//                 else if(this.moveDir != 0 && !this.anim.getAnimationState("fall_side_hurt").isPlaying)
-//                     this.anim.play("fall_side_hurt");
-//             }
-//             else
-//             {
-//                 if(this.moveDir == 0 && !this.anim.getAnimationState("fall_front").isPlaying)
-//                     this.anim.play("fall_front");
-//                 else if(this.moveDir != 0 && !this.anim.getAnimationState("fall_side").isPlaying)
-//                     this.anim.play("fall_side");
-//             }
-//         }
-//         else
-//         {
-//             if(this.damageTime > 0)
-//             {
-//                 if(this.moveDir == 0 && !this.anim.getAnimationState("idle_hurt").isPlaying)
-//                     this.anim.play("idle_hurt");
-//                 else if(this.moveDir != 0 && !this.anim.getAnimationState("walk_hurt").isPlaying)
-//                     this.anim.play("walk_hurt");
-//             }
-//             else
-//             {
-//                 if(this.moveDir == 0)
-//                 {
-//                     this.anim.stop();
-//                     this.getComponent(cc.Sprite).spriteFrame = this.idleFrame;
-//                 }
-//                 else if(!this.anim.getAnimationState("walk").isPlaying)
-//                     this.anim.play("walk");
-//             }
-//         }
-//     }
+    playerJump() 
+    {
+        const rigidBody = this.getComponent(cc.RigidBody);
 
-//     onBeginContact(contact, selfCollider, otherCollider)
-//     {
-//         if(otherCollider.node.name == "lowerBound")
-//         {
-//             this.playerDie();
-//         }
-//         else if(otherCollider.node.name == "ceiling")
-//         {
-//             cc.log("player contact");
-//         }
+        rigidBody.linearVelocity = cc.v2(rigidBody.linearVelocity.x, 400);
+        cc.audioEngine.playEffect(this.jumpSound, false);
+    }
 
-//     }
-// }
+    playerDie()
+    {
+        cc.audioEngine.playEffect(this.dieSound,false);
+        // this.gameMgr.getComponent("GameMgr").updateLife(-12);
+    }
+
+    playerAnimation()
+    {
+        // console.log("play animation");
+        // if(!this.anim.getAnimationState("walk").isPlaying)
+            // this.anim.play("walk");
+    }
+
+    onBeginContact(contact, selfCollider, otherCollider)
+    {
+        cc.log("Collision with:", otherCollider.node.name);
+    }
+}

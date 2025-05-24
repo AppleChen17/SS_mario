@@ -6,13 +6,16 @@ export default class LevelScene extends cc.Component
 {
     @property({type: cc.AudioClip})
     bgm: cc.AudioClip = null;
+    
+    @property({type: cc.Node})
+    cameraNode: cc.Node = null;
 
     private moneyLabel: cc.Label = null;
     private lifeLabel: cc.Label = null;
     private scoreLabel: cc.Label = null;
 
     private timerLabel: cc.Label = null;    // 新增倒數時間 Label
-    private timeLeft: number = 5;
+    private timeLeft: number = 15;
     private timeCounter: number = 0;
     private isGameOver: boolean = false;
     private gm : any = GameManager.instance;
@@ -47,6 +50,8 @@ export default class LevelScene extends cc.Component
 
     update(dt: number) 
     {
+        let cameraPos = this.cameraNode.getPosition();
+        this.node.setPosition(cameraPos);
         if (cc.director.getScene().name !== "Level0") return;
         if (this.isGameOver) return;
 
