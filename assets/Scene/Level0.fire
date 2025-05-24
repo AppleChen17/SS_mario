@@ -85,9 +85,6 @@
       },
       {
         "__id__": 43
-      },
-      {
-        "__id__": 44
       }
     ],
     "_prefab": null,
@@ -2079,23 +2076,5 @@
     "_originalWidth": 0,
     "_originalHeight": 0,
     "_id": "29zXboiXFBKoIV4PQ2liTe"
-  },
-  {
-    "__type__": "26d1cJAXwRNCo5piKaazu5N",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 2
-    },
-    "_enabled": true,
-    "bgmAudio": null,
-    "bgm_1": null,
-    "bgm_2": null,
-    "bgm_3": null,
-    "coins": 0,
-    "life": 5,
-    "playerName": "USER",
-    "score": 0,
-    "_id": "6aH0noD2pAtYbZ7hIznSdE"
   }
 ]

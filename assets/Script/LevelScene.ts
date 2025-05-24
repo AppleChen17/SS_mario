@@ -6,18 +6,19 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
+import GameManager from "./GameManager"; // ← 請根據實際路徑調整
 
 @ccclass
 export default class LevelScene extends cc.Component {
+
+    private gm : any = GameManager.instance;
     start ()
     {
-        const gmNode = cc.find('Canvas'); // the mode
-        const gm = gmNode.getComponent('GameManager'); // the script
-
         const moneyNode = cc.find("LevelScene/info/money/coin");
         const userNode = cc.find("LevelScene/info/user/name");
         const lifeNode = cc.find("LevelScene/info/life/Label_life");
         const scoreNode = cc.find("LevelScene/info/score/Label_num");
+        
 
         let Level0Button = new cc.Component.EventHandler();
         Level0Button.target = this.node;
@@ -36,7 +37,7 @@ export default class LevelScene extends cc.Component {
         {
             const label = moneyNode.getComponent(cc.Label);
             if (label) {
-                label.string = `${gm.coins}`;
+                label.string = `${this.gm.coin}`;
             }
         }
 
@@ -44,7 +45,7 @@ export default class LevelScene extends cc.Component {
         {
             const label = userNode.getComponent(cc.Label);
             if (label) {
-                label.string = `${gm.playerName}`;
+                label.string = `${this.gm.playerName}`;
             }
         }
 
@@ -52,7 +53,7 @@ export default class LevelScene extends cc.Component {
         {
             const label = lifeNode.getComponent(cc.Label);
             if (label) {
-                label.string = `${gm.life}`;
+                label.string = `${this.gm.life}`;
             }
         }
 
@@ -60,7 +61,7 @@ export default class LevelScene extends cc.Component {
         {
             const label = scoreNode.getComponent(cc.Label);
             if (label) {
-                label.string = `${gm.score}`;
+                label.string = `${this.gm.score}`;
             }
         }
     }

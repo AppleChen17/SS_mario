@@ -1,10 +1,10 @@
-import GameManager from "./GameManager"; // ← 請根據實際路徑調整
+import GameManager from "./GameManager";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class LevelScene extends cc.Component {
 
-    private gm: any = null;
+    // private gm: any = null;
     private moneyLabel: cc.Label = null;
     private lifeLabel: cc.Label = null;
     private scoreLabel: cc.Label = null;
@@ -13,15 +13,17 @@ export default class LevelScene extends cc.Component {
     private timeLeft: number = 5;
     private timeCounter: number = 0;
     private isGameOver: boolean = false;
+    private gm : any = GameManager.instance;
 
     start () {
-        const gmNode = cc.find('Canvas'); 
-        this.gm = gmNode.getComponent('GameManager'); 
+        // const gmNode = cc.find('Canvas'); 
+        // this.gm = gmNode.getComponent('GameManager'); 
 
         const moneyNode = cc.find("Canvas/Info/money/money");
         const lifeNode = cc.find("Canvas/Info/life/Label_life");
         const scoreNode = cc.find("Canvas/Info/score/score");
         const timerNode = cc.find("Canvas/Info/timer/left_time");
+        // const gm = GameManager.instance;
 
         if(moneyNode) {
             this.moneyLabel = moneyNode.getComponent(cc.Label);
@@ -42,10 +44,10 @@ export default class LevelScene extends cc.Component {
     }
 
     update(dt: number) {
-        if (!this.gm || this.isGameOver) return;
+        if (this.isGameOver) return;
 
         if (this.moneyLabel) {
-            this.moneyLabel.string = `${this.gm.coins}`;
+            this.moneyLabel.string = `${this.gm.coin}`;
         }
 
         if (this.lifeLabel) {
@@ -64,10 +66,10 @@ export default class LevelScene extends cc.Component {
         }
 
         // TODO: here deal with end game
-        if (this.timeLeft === 0) {
-
+        if (this.timeLeft === 0) 
+        {
             this.isGameOver = true;
-            this.gm.loseLife(1);
+            this.gm.life -= 1;
             console.log(`Time's UP ! now life = ${this.gm.life}`);
             if(this.gm.life > 0)
             {
