@@ -1,20 +1,30 @@
-// Learn TypeScript:
-//  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
-
+import GameManager from "./GameManager";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class GameOver extends cc.Component 
+{
+    @property({type: cc.AudioClip})
+    bgm: cc.AudioClip = null;
+
     start () {
-        console.log("load back StartScene");
-        this.scheduleOnce(() => {
-            cc.director.loadScene("Start");
-        }, 3);
+        console.log("in GameOver Scene");
+        cc.audioEngine.stopAll();
+        cc.audioEngine.playMusic(this.bgm, false);
+
+        // GameManager.instance.reset();
+        let BackButton = new cc.Component.EventHandler();
+        BackButton.target = this.node;
+        BackButton.component ="GameOver";
+        BackButton.handler = "loadStartScene";
+
+        cc.find("Canvas/back_btn").getComponent(cc.Button).clickEvents.push(BackButton);
     }
 
-    // update (dt) {}
+    loadStartScene()
+    {
+        console.log("want ot jump to start");
+        cc.audioEngine.stopMusic();
+        cc.director.loadScene("Start");
+    }
 }

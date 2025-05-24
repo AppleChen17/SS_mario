@@ -2,9 +2,11 @@ import GameManager from "./GameManager";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class LevelScene extends cc.Component {
+export default class LevelScene extends cc.Component 
+{
+    @property({type: cc.AudioClip})
+    bgm: cc.AudioClip = null;
 
-    // private gm: any = null;
     private moneyLabel: cc.Label = null;
     private lifeLabel: cc.Label = null;
     private scoreLabel: cc.Label = null;
@@ -24,7 +26,7 @@ export default class LevelScene extends cc.Component {
         const scoreNode = cc.find("Canvas/Info/score/score");
         const timerNode = cc.find("Canvas/Info/timer/left_time");
         // const gm = GameManager.instance;
-
+        cc.audioEngine.playMusic(this.bgm, true);
         if(moneyNode) {
             this.moneyLabel = moneyNode.getComponent(cc.Label);
         }
@@ -43,7 +45,9 @@ export default class LevelScene extends cc.Component {
         }
     }
 
-    update(dt: number) {
+    update(dt: number) 
+    {
+        if (cc.director.getScene().name !== "Level0") return;
         if (this.isGameOver) return;
 
         if (this.moneyLabel) {
@@ -68,6 +72,7 @@ export default class LevelScene extends cc.Component {
         // TODO: here deal with end game
         if (this.timeLeft === 0) 
         {
+            cc.audioEngine.stopMusic();
             this.isGameOver = true;
             this.gm.life -= 1;
             console.log(`Time's UP ! now life = ${this.gm.life}`);
@@ -75,14 +80,16 @@ export default class LevelScene extends cc.Component {
             {
                 console.log("want to jump to GameStart");
                 this.scheduleOnce(() => {
-                    cc.director.loadScene("GameStart");
+                    
                 }, 1); 
+                cc.director.loadScene("GameStart");
             }
             else
             {
                 this.scheduleOnce(() => {
-                    cc.director.loadScene("GameOver");
+                    
                 }, 1); 
+                cc.director.loadScene("GameOver");
             }
 
            

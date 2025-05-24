@@ -9,7 +9,10 @@ const {ccclass, property} = cc._decorator;
 import GameManager from "./GameManager"; // ← 請根據實際路徑調整
 
 @ccclass
-export default class LevelScene extends cc.Component {
+export default class LevelScene extends cc.Component 
+{
+    @property({type: cc.AudioClip})
+    bgm: cc.AudioClip = null;
 
     private gm : any = GameManager.instance;
     start ()
@@ -18,7 +21,7 @@ export default class LevelScene extends cc.Component {
         const userNode = cc.find("LevelScene/info/user/name");
         const lifeNode = cc.find("LevelScene/info/life/Label_life");
         const scoreNode = cc.find("LevelScene/info/score/Label_num");
-        
+        cc.audioEngine.playMusic(this.bgm, true);
 
         let Level0Button = new cc.Component.EventHandler();
         Level0Button.target = this.node;
@@ -68,11 +71,13 @@ export default class LevelScene extends cc.Component {
 
     loadStartScene()
     {
+        cc.audioEngine.stopMusic();
         cc.director.loadScene("Start");
     }
 
     loadGameScene()
     {
+        cc.audioEngine.stopMusic();
         cc.director.loadScene("GameStart");
     }
 }

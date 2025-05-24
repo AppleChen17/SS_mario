@@ -10,6 +10,10 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class StartScene extends cc.Component 
 {
+
+    @property({type: cc.AudioClip})
+    theme_music: cc.AudioClip = null;
+
     private gm : any = GameManager.instance;
     start ()
     {
@@ -18,6 +22,7 @@ export default class StartScene extends cc.Component
         StartButton.component ="StartScene";
         StartButton.handler = "loadLevelScene";
         this.gm.reset();
+        cc.audioEngine.playMusic(this.theme_music, true);
 
         cc.find("Canvas/StartScene/Start_Button").getComponent(cc.Button).clickEvents.push(StartButton);
         
@@ -32,6 +37,7 @@ export default class StartScene extends cc.Component
 
     loadLevelScene()
     {
+        cc.audioEngine.stopMusic();
         cc.director.loadScene("LevelSelect");
     }
 }
