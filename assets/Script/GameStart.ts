@@ -12,8 +12,9 @@ export default class GameStart extends cc.Component
 {
     start ()
     {
+        console.log("in GameStart scene");
         this.scheduleOnce(() => {
-            cc.director.loadScene("Level0"); 
+            cc.director.loadScene("Level0");
         }, 3); 
     }
 
