@@ -1,4 +1,5 @@
 import Mushroom from "./Mushroom";
+import GameManager from "./GameManager";
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -10,11 +11,15 @@ export default class QuestionBlock extends cc.Component {
     @property(cc.Node)
     mushroomNode: cc.Node = null;
 
+    @property(cc.Node)
+    scoreNode: cc.Node = null;
+
     @property({type:cc.AudioClip})
     block_be_hit: cc.AudioClip = null;
 
     private isHit: boolean = false;
     private anim: cc.Animation = null;
+    private gm : any = GameManager.instance;
 
     start ()
     {
@@ -22,6 +27,10 @@ export default class QuestionBlock extends cc.Component {
         if (this.mushroomNode)
         {
             this.mushroomNode.active = false;
+        }
+        if (this.scoreNode)
+        {
+            this.scoreNode.active = false;
         }
         if(!this.anim.getAnimationState("block_spin").isPlaying)
         {
@@ -49,10 +58,24 @@ export default class QuestionBlock extends cc.Component {
         const sprite = this.node.getComponent(cc.Sprite);
         sprite.spriteFrame = this.emptySprite;
 
-        // mushroom appear
+        // mushroom && score appear
         this.mushroomNode.active = true;
+        this.scoreNode.active = true;
+
+        // add score
+        this.gm.score += 100;
+        console.log("now score = ",this.gm.score);
+
+        this.scheduleOnce(() => {
+            if (this.scoreNode) 
+            {
+                this.scoreNode.destroy();
+                this.scoreNode = null;
+            }
+        }, 1);
+
         const mushroomScript = this.mushroomNode.getComponent(Mushroom);
-        if (mushroomScript) 
+        if (mushroomScript)
         {
             mushroomScript.startMoving();
         }
