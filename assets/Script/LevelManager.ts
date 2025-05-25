@@ -1,4 +1,5 @@
 import PlayerControl from "./PlayerControl";
+import GameManager from "./GameManager";
 
 const {ccclass, property} = cc._decorator;
 
@@ -29,6 +30,7 @@ export default class LevelManager extends cc.Component
 
     // @property(cc.Node)
     // private lifeBar: cc.Node = null;
+    private gm : any = GameManager.instance;
     private backgroundInitPos = -72;
 
     private backgroundResetPos = 56;
@@ -55,9 +57,9 @@ export default class LevelManager extends cc.Component
 
     onLoad()
     {
-        this.physicManager = cc.director.getPhysicsManager();
-        this.physicManager.enabled = true;
-        this.physicManager.gravity = cc.v2 (0, -200);
+        // this.physicManager = cc.director.getPhysicsManager();
+        // this.physicManager.enabled = true;
+        // this.physicManager.gravity = cc.v2 (0, -200);
         // this.physicManager.debugDrawFlags = cc.PhysicsManager.DrawBits.e_shapeBit;
 
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
@@ -92,6 +94,7 @@ export default class LevelManager extends cc.Component
 
     onKeyDown(event)
     {
+        if(this.gm.isDie) return;
         console.log("key down",event.keyCode);
         switch(event.keyCode)
         {
@@ -119,6 +122,7 @@ export default class LevelManager extends cc.Component
 
     onKeyUp(event)
     {
+        if(this.gm.isDie) return;
         console.log("key up",event.keyCode);
         switch(event.keyCode)
         {

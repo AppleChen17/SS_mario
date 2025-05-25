@@ -1,4 +1,5 @@
 import GameManager from "./GameManager";
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -75,7 +76,7 @@ export default class LevelScene extends cc.Component
         }
 
         // TODO: here deal with end game
-        if (this.timeLeft === 0) 
+        if (this.timeLeft === 0 || this.gm.isDie) 
         {
             cc.audioEngine.stopMusic();
             this.isGameOver = true;
