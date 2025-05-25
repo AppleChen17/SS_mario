@@ -1,4 +1,5 @@
 import GameManager from "./GameManager";
+// import Info from "./Info";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -15,6 +16,9 @@ export default class PlayerControl extends cc.Component
 
     @property(cc.Sprite)
     dieSpriteFrame: cc.Sprite = null;
+
+    @property(cc.Node)
+    infoNode: cc.Node = null;
 
     @property()
     playerSpeed: number = 200;
@@ -213,7 +217,7 @@ export default class PlayerControl extends cc.Component
     onBeginContact(contact, selfCollider, otherCollider)
     {
         this.isJump = false;
-        // cc.log("Mario Collision with:", otherCollider.node.name);
+        cc.log("Mario Collision with:", otherCollider.node.name);
         // if(otherCollider.node.name == "turtle") this.playerDie();
         if(otherCollider.node.name == "mushroom")
         {
@@ -221,6 +225,25 @@ export default class PlayerControl extends cc.Component
             this.isBig = true;
             this.node.setScale(1.5, 1.5);
             console.log("Mario turn big !");
+        }
+        else if(otherCollider.node.name == "flag")
+        {
+            if (this.infoNode)
+            {
+                const ClearScene = this.infoNode.getComponent("Info");
+                if (ClearScene)
+                {
+                    ClearScene.LevelClear();
+                }
+                else
+                {
+                    cc.log("Cannot Find Script Info");
+                }
+            }
+            else 
+            {
+                cc.log("infoNode 尚未綁定");
+            }
         }
     }
 

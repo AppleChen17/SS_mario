@@ -7,9 +7,15 @@ export default class LevelScene extends cc.Component
 {
     @property({type: cc.AudioClip})
     bgm: cc.AudioClip = null;
+
+    @property({type: cc.AudioClip})
+    win: cc.AudioClip = null;
     
     @property({type: cc.Node})
     cameraNode: cc.Node = null;
+
+    @property(cc.Node)
+    LevelClearNode: cc.Node = null;
 
     private moneyLabel: cc.Label = null;
     private lifeLabel: cc.Label = null;
@@ -46,6 +52,12 @@ export default class LevelScene extends cc.Component
         if (timerNode) {
             this.timerLabel = timerNode.getComponent(cc.Label);
             this.updateTimerLabel();
+        }
+
+        // hide
+        if (this.LevelClearNode)
+        {
+            this.LevelClearNode.active = false;
         }
     }
 
@@ -97,8 +109,6 @@ export default class LevelScene extends cc.Component
                 }, 1); 
                 cc.director.loadScene("GameOver");
             }
-
-           
         }
     }
 
@@ -106,5 +116,33 @@ export default class LevelScene extends cc.Component
         if (this.timerLabel) {
             this.timerLabel.string = `${this.timeLeft}`; // 直接顯示剩餘秒數
         }
+    }
+
+    public LevelClear()
+    {
+        cc.audioEngine.stopAll();
+        cc.audioEngine.playMusic(this.win, false);
+
+        this.LevelClearNode.active = true;
+
+        const time = this.timeLeft;
+        this.gm.score += time * 50;
+
+        const scoreNode = cc.find("Canvas/LevelClear/Result");
+        const timerNode = cc.find("Canvas/LevelClear/timer/left_time");
+
+        if (scoreNode) {
+            const clearScoreLabel = scoreNode.getComponent(cc.Label);
+            clearScoreLabel.string = (time * 50).toString();
+        }
+
+        if (timerNode) {
+            const clearTimeLabel = timerNode.getComponent(cc.Label);
+            clearTimeLabel.string = time.toString();
+        }
+
+        this.scheduleOnce(() => {
+            cc.director.loadScene("Start");
+        }, 10);
     }
 }
