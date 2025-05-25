@@ -27,6 +27,12 @@ export default class PlayerControl extends cc.Component
 
     @property({type:cc.AudioClip})
     dieSound: cc.AudioClip = null;
+
+    @property({type:cc.AudioClip})
+    eatMushroomSound: cc.AudioClip = null;
+
+    @property({type:cc.AudioClip})
+    turnSmall: cc.AudioClip = null;
     
 //     private idleFrame: cc.SpriteFrame = null;
 
@@ -34,8 +40,10 @@ export default class PlayerControl extends cc.Component
     private physicManager: cc.PhysicsManager = null;
     private moveDir = 0;
     private isJump = false;
+    private isInvincible = false;
     private fallDown = false;
     public isDie = false;
+    public isBig = false;
     private gm : any = GameManager.instance;
 
     start () {
@@ -60,25 +68,19 @@ export default class PlayerControl extends cc.Component
         this.node.scaleX = (this.moveDir >= 0) ? 1 : -1;
         // console.log(this.node.x,this.node.y);
 
-        // 200
         // if(this.getComponent(cc.RigidBody).linearVelocity.y != this.playerStandSpeed) this.fallDown = true;
         // else this.fallDown = false;
         if(this.node.y < -315) this.fallDown = true;
         else this.fallDown = false;
         // console.log("fall down", this.fallDown);
 
-        if(this.fallDown) 
+        if(this.fallDown && !this.isInvincible) 
         {
             this.playerDie();
             console.log("turn global player isDie = true");
             // this.gm.isDie = true;
         }
         this.playerAnimation();
-    }
-
-    eatMushroom() {
-        const bigFrame = this.bigMarioAtlas.getSpriteFrame("big_mario_idle"); // 根據你的圖名
-        this.marioSprite.spriteFrame = bigFrame;
     }
 
     reborn(rebornPos: cc.Vec2)
@@ -105,6 +107,28 @@ export default class PlayerControl extends cc.Component
     public playerDie()
     {
         if(this.isDie) return;
+        // if eat mushroom => turn back to small
+        if(this.isBig)
+        {
+            this.isBig = false;
+            this.node.setScale(1, 1);
+            this.isInvincible = true;
+            this.scheduleOnce(() => {
+                this.isInvincible = false;
+                console.log("End Invincible");
+            }, 1.5); // 無敵 1.5 秒
+
+            this.scheduleOnce(() => {
+                let finalBlink = cc.tween()
+                    .to(0.05, { opacity: 50 })
+                    .to(0.05, { opacity: 255 });
+                cc.tween(this.node)
+                    .repeat(3, finalBlink) // 0.3 秒快速閃爍
+                    .start();
+            }, 1.0);
+            cc.audioEngine.playEffect(this.turnSmall,false);
+            return;
+        }
         this.isDie = true;
         const pos = this.node.getPosition(); // get v2
         this.anim.stop();
@@ -141,35 +165,63 @@ export default class PlayerControl extends cc.Component
         const rigidBody = this.getComponent(cc.RigidBody);
         const velocity = rigidBody.linearVelocity;
 
-        if (this.isJump) 
+        if (this.isJump)
         {
-            if (!this.anim.getAnimationState("jump").isPlaying) {
-                this.anim.play("jump");
+            if(this.isBig)
+            {
+                if (!this.anim.getAnimationState("big_jump").isPlaying) {
+                    this.anim.play("big_jump");
+                }
             }
-            return;
+            else
+            {
+                if (!this.anim.getAnimationState("jump").isPlaying) {
+                    this.anim.play("jump");
+                }
+            }
         }
 
         // walk
-        if (this.moveDir !== 0) 
+        else if (this.moveDir !== 0) 
         {
-            if (!this.anim.getAnimationState("walk").isPlaying) {
-                this.anim.play("walk");
+            if(this.isBig)
+            {
+                if (!this.anim.getAnimationState("big_walk").isPlaying) 
+                {
+                    this.anim.play("big_walk");
+                }
+            }
+            else
+            {
+                if (!this.anim.getAnimationState("walk").isPlaying) 
+                {
+                    this.anim.play("walk");
+                }
             }
         }
-        
+
         else 
         {
             this.anim.stop(); // 停止所有動畫
             const sprite = this.node.getComponent(cc.Sprite);
-           sprite.spriteFrame = this.smallMarioAtlas.getSpriteFrame("mario_small_17"); 
+
+            if(this.isBig) sprite.spriteFrame = this.bigMarioAtlas.getSpriteFrame("mario_big_26"); 
+            else sprite.spriteFrame = this.smallMarioAtlas.getSpriteFrame("mario_small_17"); 
         }
     }
 
     onBeginContact(contact, selfCollider, otherCollider)
     {
         this.isJump = false;
-        // cc.log("Mario Collision with:", otherCollider.node.name);
+        cc.log("Mario Collision with:", otherCollider.node.name);
         // if(otherCollider.node.name == "turtle") this.playerDie();
+        if(otherCollider.node.name == "mushroom")
+        {
+            cc.audioEngine.playEffect(this.eatMushroomSound,false);
+            this.isBig = true;
+            this.node.setScale(1.5, 1.5);
+            console.log("Mario turn big !");
+        }
     }
 
     onEndContact(contact,selfCollider,otherCollider)

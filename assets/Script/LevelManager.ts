@@ -111,12 +111,6 @@ export default class LevelManager extends cc.Component
                 // this.rightDown = true;
                 this.player.playerJump();
                 break;
-            // case cc.macro.KEY.a:
-            //     this.gameStart();
-            //     break;
-            // case cc.macro.KEY.d:
-            //     this.gameOver();
-            //     break;
         }
     }
 
@@ -142,100 +136,4 @@ export default class LevelManager extends cc.Component
                 break;
         }
     }
-
-    // randomChoosePlatform()
-    // {
-    //     let rand = Math.random();
-
-    //     //0: normal, 1: nails, 2: fake, 3: conveyor, 4: trampoline
-    //     let prob = [6, 2, 2, 3, 2];
-    //     let sum = prob.reduce((a,b)=>a+b);
-    //     for(let i = 1; i < prob.length; i++)
-    //         prob[i] += prob[i-1];
-    //     for(let i = 0; i < prob.length; i++)
-    //     {
-    //         prob[i] /= sum;
-    //         if(rand <= prob[i])
-    //             return i;
-    //     }
-    // }
-
-    // updateHighestScore(score: number)
-    // {
-    //     this.highestScore = score;
-    //     this.highestScoreNode.getComponent(cc.Label).string = (Array(4).join("0") + this.highestScore.toString()).slice(-4);
-    // }
-
-    // updateScore(score: number)
-    // {
-    //     this.score = score;
-    //     this.scoreNode.getComponent(cc.Label).string = (Array(4).join("0") + this.score.toString()).slice(-4);
-    // }
-
-    // updateLife(num: number)
-    // {
-    //     this.playerLife += num;
-    //     this.playerLife = Math.min(Math.max(this.playerLife, 0), 12);
-    //     this.lifeBar.width = this.playerLife * 8
-    //     if(this.playerLife == 0)
-    //         this.gameOver();
-    // }
-
-    // gameStart()
-    // {
-    //     this.startIcon.active = false;
-
-    //     if(this.score > this.highestScore)
-    //     this.updateHighestScore(this.score);
-    //     this.updateScore(1);
-    //     this.updateLife(12);
-
-    //     let rebornPos = cc.v2();
-    //     this.platforms.children.forEach((platform) => {
-    //         platform.getComponent("Platform").reset();
-    //         if(platform.name != 'Nails')
-    //             rebornPos = platform.position.add(cc.v2(0, 50));
-    //     })
-
-    //     this.player.reborn(rebornPos);
-    //     this.player.node.active = true;
-    //     this.schedule(this.scoreCount, 2);
-
-    //     cc.audioEngine.playMusic(this.bgm, true);
-    // }
-
-    // gamePause()
-    // {
-    //     if(this.pause)
-    //         this.pause = false;
-    //     else
-    //         this.pause = true;
-    //     if(this.pause)
-    //     {
-    //         this.pauseIcon.active = true;
-    //         this.scheduleOnce(()=>{
-    //             cc.game.pause();
-    //         }, 0.1);
-    //     }
-    //     else
-    //     {
-    //         this.pauseIcon.active = false;
-    //         cc.game.resume();
-    //     }
-    // }
-
-    // gameOver()
-    // {
-    //     this.player.node.active = false;
-    //     this.unschedule(this.scoreCount);
-
-    //     this.startIcon.active = true;
-
-    //     cc.audioEngine.stopMusic();
-    // }
-
-    // gameEnd()
-    // {
-    //     cc.game.end();
-    // }
 }

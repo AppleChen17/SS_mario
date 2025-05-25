@@ -95,9 +95,9 @@ export default class Enemy extends cc.Component {
                 {
                     console.log("player die");
                     const playerControl = otherCollider.node.getComponent(PlayerControl);
-                    if (playerControl) 
+                    if (playerControl && (!playerControl.isInvincible)) 
                     {
-                        playerControl.playerDie(); // 呼叫玩家受傷的處理
+                        playerControl.playerDie();
                     }
                 }
             }

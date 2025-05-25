@@ -16,7 +16,7 @@ export default class LevelScene extends cc.Component
     private scoreLabel: cc.Label = null;
 
     private timerLabel: cc.Label = null;    // 新增倒數時間 Label
-    private timeLeft: number = 15;
+    private timeLeft: number = 30;
     private timeCounter: number = 0;
     private isGameOver: boolean = false;
     private gm : any = GameManager.instance;
