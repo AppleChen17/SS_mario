@@ -46,8 +46,6 @@ export default class Enemy extends cc.Component {
 
     update(dt: number) 
     {
-        if (this.isDie) return;
-
         this.node.x += this.speed * this.direction * dt;
         this.node.scaleX = (this.direction < 0) ? 1 : -1;
         this.turtleAnimation();
@@ -68,17 +66,28 @@ export default class Enemy extends cc.Component {
             cc.log("Turtle Collision with:", otherCollider.node.name);
             if(otherCollider.node.name == "mario")
             {
-                if(isUpside)
+                if(isUpside && (!this.isDie))
                 {
                     console.log("from up!");
+                    this.speed = 0;
                     // 依據來的角度決定誰死
                     this.die();
                     cc.audioEngine.playEffect(this.turtle_be_kicked, false);
                     this.scheduleOnce(() => {
                         const sprite = this.node.getComponent(cc.Sprite);
-                        sprite.spriteFrame = this.turtleAtlas.getSpriteFrame("turtle_4"); 
+                        sprite.spriteFrame = this.turtleAtlas.getSpriteFrame("turtle_4");
                         console.log('音效播放完，正式進入死亡狀態');
-                    }, 0.5);
+                    }, 1.0);
+
+
+                    this.scheduleOnce(() => {
+                        if (!this.anim.getAnimationState("turtle_spin").isPlaying)
+                        {
+                            this.anim.play("turtle_spin");
+                            console.log('start spinning !!!');
+                            this.speed = 5;
+                        }
+                    }, 5);
                 }
                 else 
                 {
@@ -98,7 +107,7 @@ export default class Enemy extends cc.Component {
     turtleAnimation()
     {
         // console.log("play animation");
-        if(this.isDie) return;
+        // if(this.isDie) return;
         const animState = this.anim.getAnimationState;
 
         const rigidBody = this.getComponent(cc.RigidBody);
