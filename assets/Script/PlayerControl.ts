@@ -102,7 +102,7 @@ export default class PlayerControl extends cc.Component
         cc.audioEngine.playEffect(this.jumpSound, false);
     }
 
-    playerDie()
+    public playerDie()
     {
         if(this.isDie) return;
         this.isDie = true;
@@ -168,7 +168,8 @@ export default class PlayerControl extends cc.Component
     onBeginContact(contact, selfCollider, otherCollider)
     {
         this.isJump = false;
-        // cc.log("Collision with:", otherCollider.node.name);
+        // cc.log("Mario Collision with:", otherCollider.node.name);
+        // if(otherCollider.node.name == "turtle") this.playerDie();
     }
 
     onEndContact(contact,selfCollider,otherCollider)

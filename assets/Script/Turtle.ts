@@ -1,12 +1,13 @@
 const { ccclass, property } = cc._decorator;
+import PlayerControl from "./PlayerControl";
 
 @ccclass
 export default class Enemy extends cc.Component {
     @property
     speed: number = 5;
 
-    @property
-    moveDistance: number = 10; // 來回距離
+    // @property
+    // moveDistance: number = 10; // 來回距離
 
     @property(cc.SpriteAtlas)
     turtleAtlas: cc.SpriteAtlas = null;
@@ -16,6 +17,9 @@ export default class Enemy extends cc.Component {
 
     @property(cc.Node)
     ground: cc.Node = null;
+
+    @property({type:cc.AudioClip})
+    turtle_be_kicked: cc.AudioClip = null;
 
     private startX: number = 0;
     private direction: number = 1;
@@ -33,15 +37,6 @@ export default class Enemy extends cc.Component {
         this.physicManager.gravity = cc.v2(0, -200);
         this.rigidBody = this.getComponent(cc.RigidBody);
         console.log("start = ",this.node.x,this.startX);
-        // if (this.rigidBody) {
-            // this.rigidBody.fixedRotation = true;
-        // }
-
-        // 監聽碰撞事件
-        // const collider = this.getComponent(cc.Collider);
-        // if (collider) {
-        //     collider.on('onBeginContact', this.onBeginContact, this);
-        // }
     }
 
     start() {
@@ -60,10 +55,43 @@ export default class Enemy extends cc.Component {
 
     onBeginContact(contact, selfCollider, otherCollider)
     {
+        const normal = contact.getWorldManifold().normal;
+        const isUpside = normal.y > 0.9;
+        // if (!isUpside)
+        // {
+        //     contact.disabled = true;
+        //     return;
+        // }
+
         if(otherCollider.node.name != "圖塊層 5")
         {
-            cc.log("Collision with:", otherCollider.node.name);
-            this.direction *= -1;
+            cc.log("Turtle Collision with:", otherCollider.node.name);
+            if(otherCollider.node.name == "mario")
+            {
+                if(isUpside)
+                {
+                    console.log("from up!");
+                    // 依據來的角度決定誰死
+                    this.die();
+                    cc.audioEngine.playEffect(this.turtle_be_kicked, false);
+                    this.scheduleOnce(() => {
+                        const sprite = this.node.getComponent(cc.Sprite);
+                        sprite.spriteFrame = this.turtleAtlas.getSpriteFrame("turtle_4"); 
+                        console.log('音效播放完，正式進入死亡狀態');
+                    }, 0.5);
+                }
+                else 
+                {
+                    console.log("player die");
+                    const playerControl = otherCollider.node.getComponent(PlayerControl);
+                    if (playerControl) 
+                    {
+                        playerControl.playerDie(); // 呼叫玩家受傷的處理
+                    }
+                }
+            }
+            // change direction
+            else this.direction *= -1;
         }
     }
 
@@ -77,42 +105,35 @@ export default class Enemy extends cc.Component {
         const velocity = rigidBody.linearVelocity;
 
         // walk
-        if (this.direction !== 0) 
+        if (!this.isDie) 
         {
-            if (!this.anim.getAnimationState("turtle_walk").isPlaying) {
+            if (!this.anim.getAnimationState("turtle_walk").isPlaying) 
+            {
                 this.anim.play("turtle_walk");
             }
         }
-        
-        else 
-        {
-            this.anim.stop(); // 停止所有動畫
-            const sprite = this.node.getComponent(cc.Sprite);
-           sprite.spriteFrame = this.turtleAtlas.getSpriteFrame("turtle_4"); 
-        }
+
+        // else
+        // {
+        //     this.die();
+
+        //     this.scheduleOnce(() => {
+        //         const sprite = this.node.getComponent(cc.Sprite);
+        //         sprite.spriteFrame = this.turtleAtlas.getSpriteFrame("turtle_4"); 
+        //         console.log('音效播放完，正式進入死亡狀態');
+        //     }, 0.5);
+
+        // }
     }
 
-    // 被踩死時呼叫此方法
-    // public die() {
-    //     if (this.isDie) return;
+    public die() 
+    {
+        if (this.isDie) return;
 
-    //     this.isDie = true;
-
-    //     // 停止移動
-    //     this.rigidBody.linearVelocity = cc.v2(0, 0);
-    //     this.rigidBody.enabledContactListener = false;
-
-    //     // 換成死亡貼圖
-    //     if (this.DieSprite && this.turtleAtlas) {
-    //         const frame = this.turtleAtlas.getSpriteFrame("turtle_die");
-    //         if (frame) {
-    //             this.DieSprite.spriteFrame = frame;
-    //         }
-    //     }
-
-    //     // 幾秒後移除節點
-    //     this.scheduleOnce(() => {
-    //         this.node.destroy();
-    //     }, 1);
-    // }
+        this.isDie = true;
+        if (!this.anim.getAnimationState("turtle_die").isPlaying)
+        {
+            this.anim.play("turtle_die");
+        }
+    }
 }
