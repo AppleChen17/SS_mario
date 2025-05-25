@@ -28,6 +28,7 @@ export default class Enemy extends cc.Component {
     private physicManager: cc.PhysicsManager = null;
     private rigidBody: cc.RigidBody = null;
     private changedir: boolean = false;
+    private canChangeDirection: boolean = true;
 
     onLoad() {
         this.startX = this.node.x;
@@ -46,13 +47,18 @@ export default class Enemy extends cc.Component {
 
     update(dt: number) 
     {
-        this.node.x += this.speed * this.direction * dt;
+        // this.node.x += this.speed * this.direction * dt;
+        // this.node.scaleX = (this.direction < 0) ? 1 : -1;
+        
+        // is rigid body => have speed and use linear Velocity !
+        this.rigidBody.linearVelocity = cc.v2(this.speed * this.direction, this.rigidBody.linearVelocity.y);
         this.node.scaleX = (this.direction < 0) ? 1 : -1;
         this.turtleAnimation();
     }
 
     onBeginContact(contact, selfCollider, otherCollider)
     {
+        if (!this.canChangeDirection) return;
         const normal = contact.getWorldManifold().normal;
         const isUpside = normal.y > 0.9;
         // if (!isUpside)
@@ -60,26 +66,32 @@ export default class Enemy extends cc.Component {
         //     contact.disabled = true;
         //     return;
         // }
-
+        cc.log("Turtle Collision with:", otherCollider.node.name);
         if(otherCollider.node.name != "圖塊層 5")
         {
-            cc.log("Turtle Collision with:", otherCollider.node.name);
+            // cc.log("Turtle Collision with:", otherCollider.node.name);
+
             if(otherCollider.node.name == "mario")
             {
                 if(isUpside && (!this.isDie))
                 {
                     console.log("from up!");
                     this.speed = 0;
-                    contact.disabled = true;
+                    const playerControl = otherCollider.node.getComponent(PlayerControl);
+                    playerControl.isInvincible = true;
+                    this.scheduleOnce(() => {
+                        playerControl.isInvincible = false;
+                        console.log("End Invincible");
+                    }, 1.5); // 無敵 1.5 秒
+
                     // 依據來的角度決定誰死
                     this.die();
                     cc.audioEngine.playEffect(this.turtle_be_kicked, false);
                     this.scheduleOnce(() => {
                         const sprite = this.node.getComponent(cc.Sprite);
                         sprite.spriteFrame = this.turtleAtlas.getSpriteFrame("turtle_4");
-                        console.log('音效播放完，正式進入死亡狀態');
+                        console.log('finish turtle_be_kicked => turtie.isDie');
                     }, 1.0);
-
 
                     this.scheduleOnce(() => {
                         contact.disabled = false;
@@ -87,11 +99,11 @@ export default class Enemy extends cc.Component {
                         {
                             this.anim.play("turtle_spin");
                             console.log('start spinning !!!');
-                            this.speed = 5;
+                            this.speed = 100;
                         }
                     }, 5);
                 }
-                else 
+                else
                 {
                     console.log("player die");
                     const playerControl = otherCollider.node.getComponent(PlayerControl);
@@ -101,8 +113,19 @@ export default class Enemy extends cc.Component {
                     }
                 }
             }
+            
             // change direction
-            else this.direction *= -1;
+            else
+            {
+                this.direction *= -1;
+                console.log("change Turtle direction");
+                this.canChangeDirection = false;
+
+                // 設定一段冷卻，避免太快反覆切換
+                this.scheduleOnce(() => {
+                    this.canChangeDirection = true;
+                }, 0.3); // 0.3秒可調整
+            }
         }
     }
 

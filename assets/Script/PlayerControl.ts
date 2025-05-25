@@ -213,7 +213,7 @@ export default class PlayerControl extends cc.Component
     onBeginContact(contact, selfCollider, otherCollider)
     {
         this.isJump = false;
-        cc.log("Mario Collision with:", otherCollider.node.name);
+        // cc.log("Mario Collision with:", otherCollider.node.name);
         // if(otherCollider.node.name == "turtle") this.playerDie();
         if(otherCollider.node.name == "mushroom")
         {
