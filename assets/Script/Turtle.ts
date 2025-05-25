@@ -70,6 +70,7 @@ export default class Enemy extends cc.Component {
                 {
                     console.log("from up!");
                     this.speed = 0;
+                    contact.disabled = true;
                     // 依據來的角度決定誰死
                     this.die();
                     cc.audioEngine.playEffect(this.turtle_be_kicked, false);
@@ -81,6 +82,7 @@ export default class Enemy extends cc.Component {
 
 
                     this.scheduleOnce(() => {
+                        contact.disabled = false;
                         if (!this.anim.getAnimationState("turtle_spin").isPlaying)
                         {
                             this.anim.play("turtle_spin");
