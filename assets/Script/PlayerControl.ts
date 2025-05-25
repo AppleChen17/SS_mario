@@ -31,7 +31,7 @@ export default class PlayerControl extends cc.Component
 //     private idleFrame: cc.SpriteFrame = null;
 
     private anim: cc.Animation = null;
-    private physicManager: cc.PhysicsManager = null
+    private physicManager: cc.PhysicsManager = null;
     private moveDir = 0;
     private isJump = false;
     private fallDown = false;
@@ -65,7 +65,7 @@ export default class PlayerControl extends cc.Component
         // else this.fallDown = false;
         if(this.node.y < -315) this.fallDown = true;
         else this.fallDown = false;
-        console.log("fall down", this.fallDown);
+        // console.log("fall down", this.fallDown);
 
         if(this.fallDown) 
         {
@@ -168,7 +168,7 @@ export default class PlayerControl extends cc.Component
     onBeginContact(contact, selfCollider, otherCollider)
     {
         this.isJump = false;
-        cc.log("Collision with:", otherCollider.node.name);
+        // cc.log("Collision with:", otherCollider.node.name);
     }
 
     onEndContact(contact,selfCollider,otherCollider)
