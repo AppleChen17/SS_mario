@@ -62,6 +62,10 @@ export default class Enemy extends cc.Component {
         // is rigid body => have speed and use linear Velocity !
         this.rigidBody.linearVelocity = cc.v2(this.speed * this.direction, this.rigidBody.linearVelocity.y);
         this.node.scaleX = (this.direction < 0) ? 1 : -1;
+        // if (this.scoreNode) 
+        // {
+        //     this.scoreNode.scaleX = 1;
+        // }
         this.turtleAnimation();
     }
 
@@ -87,7 +91,11 @@ export default class Enemy extends cc.Component {
                     console.log("from up!");
                     this.speed = 0;
                     this.gm.score += 200;
-                    this.scoreNode.active = true;
+                    if(this.scoreNode)
+                    {
+                        this.scoreNode.scaleX = 1;
+                        this.scoreNode.active = true;
+                    }
                     const playerControl = otherCollider.node.getComponent(PlayerControl);
                     playerControl.isInvincible = true;
 

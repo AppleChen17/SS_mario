@@ -3456,12 +3456,12 @@
     "body": null,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 310,
+      "x": 312.2,
       "y": -304
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 193,
+      "width": 188.6,
       "height": 31
     },
     "_id": "11SJnSjuRPn6xoQXBs2Lhl"
@@ -5932,7 +5932,7 @@
       "__id__": 148
     },
     "block_be_hit": {
-      "__uuid__": "292dba8c-b0a7-44c1-ae9c-7af92a117dc4"
+      "__uuid__": "f681a97d-48ca-4ecb-b385-adf8bd46c6b7"
     },
     "_id": "1f6O0KEddBbafHegChDuJf"
   },

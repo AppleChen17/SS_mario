@@ -17,6 +17,7 @@ export default class GameStart extends cc.Component
     {
         this.gm.isDie = false;
         this.gm.score = 0;
+        this.gm.coin = 0;
         if (cc.director.getScene().name !== "GameStart") return;
         console.log("in GameStart scene");
         this.scheduleOnce(() => {

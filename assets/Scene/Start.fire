@@ -807,7 +807,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 95,
+      "width": 100,
       "height": 40
     },
     "_anchorPoint": {
@@ -859,8 +859,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "LOGIN",
-    "_N$string": "LOGIN",
+    "_string": "START",
+    "_N$string": "START",
     "_fontSize": 80,
     "_lineHeight": 40,
     "_enableWrapText": true,
