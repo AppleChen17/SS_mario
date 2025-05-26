@@ -1,5 +1,6 @@
 const { ccclass, property } = cc._decorator;
 import PlayerControl from "./PlayerControl";
+import GameManager from "./GameManager";
 
 @ccclass
 export default class Enemy extends cc.Component {
@@ -18,6 +19,9 @@ export default class Enemy extends cc.Component {
     @property(cc.Node)
     ground: cc.Node = null;
 
+    @property(cc.Node)
+    scoreNode: cc.Node = null;
+
     @property({type:cc.AudioClip})
     turtle_be_kicked: cc.AudioClip = null;
 
@@ -29,6 +33,7 @@ export default class Enemy extends cc.Component {
     private rigidBody: cc.RigidBody = null;
     private changedir: boolean = false;
     private canChangeDirection: boolean = true;
+    private gm : any = GameManager.instance;
 
     onLoad() {
         this.startX = this.node.x;
@@ -42,7 +47,11 @@ export default class Enemy extends cc.Component {
 
     start() {
         this.anim = this.getComponent(cc.Animation);
-        this.node.setPosition(cc.v2(600, -200));
+        this.node.setPosition(cc.v2(600, -200));        
+        if (this.scoreNode)
+        {
+            this.scoreNode.active = false;
+        }
     }
 
     update(dt: number) 
@@ -77,11 +86,19 @@ export default class Enemy extends cc.Component {
                 {
                     console.log("from up!");
                     this.speed = 0;
+                    this.gm.score += 200;
+                    this.scoreNode.active = true;
                     const playerControl = otherCollider.node.getComponent(PlayerControl);
                     playerControl.isInvincible = true;
+
                     this.scheduleOnce(() => {
                         playerControl.isInvincible = false;
                         console.log("End Invincible");
+                        if(this.scoreNode)
+                        {
+                            this.scoreNode.destroy();
+                            this.scoreNode = null;
+                        }
                     }, 1.5); // 無敵 1.5 秒
 
                     // 依據來的角度決定誰死

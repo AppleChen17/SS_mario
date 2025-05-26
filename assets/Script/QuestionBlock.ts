@@ -12,6 +12,9 @@ export default class QuestionBlock extends cc.Component {
     mushroomNode: cc.Node = null;
 
     @property(cc.Node)
+    coinNode: cc.Node = null;
+
+    @property(cc.Node)
     scoreNode: cc.Node = null;
 
     @property({type:cc.AudioClip})
@@ -27,6 +30,10 @@ export default class QuestionBlock extends cc.Component {
         if (this.mushroomNode)
         {
             this.mushroomNode.active = false;
+        }
+        if (this.coinNode)
+        {
+            this.coinNode.active = false;
         }
         if (this.scoreNode)
         {
@@ -59,7 +66,8 @@ export default class QuestionBlock extends cc.Component {
         sprite.spriteFrame = this.emptySprite;
 
         // mushroom && score appear
-        this.mushroomNode.active = true;
+        if(this.mushroomNode) this.mushroomNode.active = true;
+        if(this.coinNode) this.coinNode.active = true;
         this.scoreNode.active = true;
 
         // add score
@@ -71,6 +79,12 @@ export default class QuestionBlock extends cc.Component {
             {
                 this.scoreNode.destroy();
                 this.scoreNode = null;
+            }
+            if (this.coinNode) 
+            {
+                this.coinNode.destroy();
+                this.coinNode = null;
+                this.gm.coin += 1;
             }
         }, 1);
 
