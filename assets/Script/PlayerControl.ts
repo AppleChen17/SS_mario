@@ -216,7 +216,15 @@ export default class PlayerControl extends cc.Component
 
     onBeginContact(contact, selfCollider, otherCollider)
     {
-        this.isJump = false;
+        
+        const normal = contact.getWorldManifold().normal;
+        const isBelow = normal.y < -0.9;
+        // the platform contact from "bottom" => NOT jumping
+        if(isBelow)
+        {
+            this.isJump = false;
+        }
+        
         cc.log("Mario Collision with:", otherCollider.node.name);
         // if(otherCollider.node.name == "turtle") this.playerDie();
         if(otherCollider.node.name == "mushroom")
@@ -233,6 +241,8 @@ export default class PlayerControl extends cc.Component
                 const ClearScene = this.infoNode.getComponent("Info");
                 if (ClearScene)
                 {
+                    this.gm.isClear = true;
+                    this.moveDir = 0; // stop walking
                     ClearScene.LevelClear();
                 }
                 else

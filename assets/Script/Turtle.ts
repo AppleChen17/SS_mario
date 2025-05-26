@@ -117,6 +117,7 @@ export default class Enemy extends cc.Component {
             // change direction
             else
             {
+                if(otherCollider.node.name == "圖塊層 4" || otherCollider.node.name == "圖塊層 6")
                 this.direction *= -1;
                 console.log("change Turtle direction");
                 this.canChangeDirection = false;

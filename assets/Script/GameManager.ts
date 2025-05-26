@@ -6,6 +6,7 @@ export default class GameManager {
     public score: number = 0;
     public playerName: string = "PLAYER";
     public isDie: boolean = false;
+    public isClear: boolean = false;
 
     private constructor() {}
 
@@ -23,5 +24,6 @@ export default class GameManager {
         this.score = 0;
         this.playerName = "PLAYER";
         this.isDie = false;
+        this.isClear = false;
     }
 }

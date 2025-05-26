@@ -94,7 +94,7 @@ export default class LevelManager extends cc.Component
 
     onKeyDown(event)
     {
-        if(this.gm.isDie) return;
+        if(this.gm.isDie || this.gm.isClear) return;
         console.log("key down",event.keyCode);
         switch(event.keyCode)
         {
@@ -116,7 +116,7 @@ export default class LevelManager extends cc.Component
 
     onKeyUp(event)
     {
-        if(this.gm.isDie) return;
+        if(this.gm.isDie || this.gm.isClear) return;
         console.log("key up",event.keyCode);
         switch(event.keyCode)
         {
